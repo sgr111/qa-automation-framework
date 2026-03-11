@@ -30,6 +30,10 @@ jobs:
       - name: Create reports & screenshots dirs
         run: mkdir -p reports screenshots
 
+      - name: Fix chromedriver permissions
+        run: |
+          find /home/runner/.wdm -name "chromedriver" -exec chmod +x {} \;
+
       - name: Run smoke tests
         run: pytest -m smoke --html=reports/smoke_report.html --self-contained-html
 
