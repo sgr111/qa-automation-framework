@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+import os
 import logging
 
 logger = logging.getLogger(__name__)
@@ -19,7 +21,13 @@ def get_driver(browser: str = "chrome", headless: bool = True) -> webdriver.Chro
     options.add_experimental_option("useAutomationExtension", False)
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36")
 
-    service = Service(r"C:\Users\Saurabh\chromedriver\chromedriver-win64\chromedriver.exe")
+    # Use local path on Windows, auto-detect on GitHub Actions (Linux)
+    local_driver = r"C:\Users\Saurabh\chromedriver\chromedriver-win64\chromedriver.exe"
+    if os.path.exists(local_driver):
+        service = Service(local_driver)
+    else:
+        service = Service(ChromeDriverManager().install())
+
     driver = webdriver.Chrome(service=service, options=options)
     driver.implicitly_wait(10)
     logger.info(f"Chrome driver initialized (headless={headless})")
