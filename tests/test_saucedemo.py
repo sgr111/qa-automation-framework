@@ -1,6 +1,9 @@
 import pytest
 import csv
 import os
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from pages.login_page import LoginPage
 from pages.products_page import ProductsPage
 from pages.cart_page import CartPage
@@ -182,13 +185,23 @@ class TestSaucedemoCheckout:
         """
         # Step 1: Add product to cart
         products = ProductsPage(driver)
+        products.wait_for_element(*ProductsPage.PRODUCT_ITEMS)
         products.add_product_by_name("Sauce Labs Backpack")
-        assert products.get_cart_count() == 1
+        assert products.get_cart_count() == 1, \
+            f"Expected cart count 1, got: {products.get_cart_count()}"
 
         # Step 2: Go to cart
         products.go_to_cart()
+
+        # Wait for cart URL and container
+        WebDriverWait(driver, 10).until(EC.url_contains("cart"))
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".cart_contents_container"))
+        )
+
         cart = CartPage(driver)
-        assert cart.get_cart_item_count() == 1
+        items = driver.find_elements(By.CSS_SELECTOR, ".cart_item")
+        assert len(items) == 1, f"Expected 1 cart item, got {len(items)}"
         assert "Sauce Labs Backpack" in cart.get_cart_item_names()
 
         # Step 3: Checkout

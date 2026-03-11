@@ -20,6 +20,17 @@ def get_driver(browser: str = "chrome", headless: bool = True) -> webdriver.Chro
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option("useAutomationExtension", False)
+    options.add_argument("--password-store=basic")
+    options.add_experimental_option("prefs", {             
+    "credentials_enable_service": False,
+    "profile.password_manager_enabled": False
+    })
+    options.add_argument("--disable-features=PasswordCheck,PasswordLeakDetection")
+
+    options.add_argument("--disable-infobars")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-popup-blocking")
+    
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36")
 
     local_driver = r"C:\Users\Saurabh\chromedriver\chromedriver-win64\chromedriver.exe"

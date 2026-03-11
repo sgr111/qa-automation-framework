@@ -1,4 +1,6 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from pages.base_page import BasePage
 import logging
 
@@ -17,6 +19,16 @@ class ProductsPage(BasePage):
     CART_BADGE = (By.CSS_SELECTOR, ".shopping_cart_badge")
     CART_ICON = (By.CSS_SELECTOR, ".shopping_cart_link")
     SORT_DROPDOWN = (By.CSS_SELECTOR, ".product_sort_container")
+
+    def _dismiss_popups(self):
+        """Dismiss any browser popups or overlays via JavaScript."""
+        try:
+            self.driver.execute_script("""
+                document.querySelectorAll('div[role="dialog"]').forEach(e => e.remove());
+                document.querySelectorAll('.modal').forEach(e => e.remove());
+            """)
+        except Exception:
+            pass
 
     def get_page_title(self) -> str:
         """Return the products page title text."""
@@ -40,19 +52,23 @@ class ProductsPage(BasePage):
         return [float(e.text.replace("$", "")) for e in elements]
 
     def add_first_product_to_cart(self):
-        """Click Add to Cart for the first product."""
+        """Click Add to Cart for the first product using JS."""
+        self._dismiss_popups()
         buttons = self.driver.find_elements(*self.ADD_TO_CART_BUTTONS)
         if buttons:
-            buttons[0].click()
+            self.driver.execute_script("arguments[0].click();", buttons[0])
             logger.info("Added first product to cart")
 
     def add_product_by_name(self, product_name: str):
-        """Add a specific product to cart by its name."""
+        """Add a specific product to cart by its name using JS click."""
+        self._dismiss_popups()
+        # Wait for products to load
+        self.wait_for_element(*self.PRODUCT_ITEMS)
         names = self.driver.find_elements(*self.PRODUCT_NAMES)
         for i, name in enumerate(names):
             if name.text == product_name:
                 buttons = self.driver.find_elements(*self.ADD_TO_CART_BUTTONS)
-                buttons[i].click()
+                self.driver.execute_script("arguments[0].click();", buttons[i])
                 logger.info(f"Added '{product_name}' to cart")
                 return
         raise ValueError(f"Product '{product_name}' not found")
@@ -65,8 +81,10 @@ class ProductsPage(BasePage):
             return 0
 
     def go_to_cart(self):
-        """Click the cart icon."""
-        self.driver.find_element(*self.CART_ICON).click()
+        """Click the cart icon using JS."""
+        self._dismiss_popups()
+        cart = self.driver.find_element(*self.CART_ICON)
+        self.driver.execute_script("arguments[0].click();", cart)
         logger.info("Navigated to cart")
 
     def sort_products(self, option: str):

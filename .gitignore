@@ -1,0 +1,10 @@
+
+# Cache
+__pycache__/
+*.pyc
+
+# Reports
+reports/
+
+# Screenshots
+screenshots/
