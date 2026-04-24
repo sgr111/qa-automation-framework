@@ -9,11 +9,11 @@ A production-style test automation framework built with **Python**, **Selenium W
 | Suite | Application | Tests | Type |
 |---|---|---|---|
 | Google Search | google.com | 12 | UI / Selenium |
-| Saucedemo E2E | saucedemo.com | 17 | UI / Selenium |
+| Saucedemo E2E | saucedemo.com | 16 | UI / Selenium |
 | REST API | jsonplaceholder.typicode.com | 22 | API / requests |
-| **Total** | | **51** | |
+| **Total** | | **50** | |
 
-**CI/CD Status:** All 51 tests passing on GitHub Actions (Ubuntu Linux) ✅
+**CI/CD Status:** All 50 tests passing on GitHub Actions (Ubuntu Linux) ✅
 
 ---
 
@@ -144,7 +144,7 @@ Open in any browser to view pass/fail results, logs, durations, and inline failu
 | `test_search_with_special_characters` | regression | Special chars don't crash browser |
 | `test_search_with_very_long_query` | regression | Long input handled gracefully |
 
-### Saucedemo E2E Suite (17 tests)
+### Saucedemo E2E Suite (16 tests)
 | Test | Marker | Description |
 |---|---|---|
 | `test_login_valid_user` | smoke | Standard user can log in successfully |
